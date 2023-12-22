@@ -95,7 +95,6 @@ namespace NumberRecognizer
 
         }
 
-
         private void FillNeuronInput(string pathToImage)
         {
             var image = new Bitmap(pathToImage);
@@ -111,6 +110,7 @@ namespace NumberRecognizer
                 }
             }
         }
+
         private float GetSigmoid(float input) => (float)(1 / (1 + Math.Pow(Math.E, -input)));
         private char GetImageNumber(string image) => image[image.Length - 5];
 
@@ -118,9 +118,9 @@ namespace NumberRecognizer
         {
             string json = JsonConvert.SerializeObject(new
             {
-                neuronHiddenColumn1Weights,
-                neuronHiddenColumn2Weights,
-                neuronOutputWeights
+                w1 = neuronHiddenColumn1Weights,
+                w2 = neuronHiddenColumn2Weights,
+                w3 = neuronOutputWeights
             });
             File.WriteAllText(filePath, json);
         }
