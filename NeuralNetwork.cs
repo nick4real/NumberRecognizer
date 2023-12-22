@@ -1,10 +1,13 @@
-﻿using System.Text.Json.Serialization;
+﻿
+using System.IO;
+using Newtonsoft.Json;
 
 namespace NumberRecognizer
 {
-    
     public class NeuralNetwork
     {
+        private readonly string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "arrays.json");
+
         private float[] neuronInput = new float[28 * 28];
         private float[] neuronHiddenColumn1 = new float[16];
         private float[] neuronHiddenColumn2 = new float[16];
@@ -38,6 +41,15 @@ namespace NumberRecognizer
 
             for (int i = 0; i < neuronOutputWeights.Length; i++)
                 neuronOutputWeights[i] = new float[10];
+
+            if (!File.Exists(filePath))
+            {
+                SaveCondition();
+            }
+            else
+            {
+                LoadCondition();
+            }
         }
 
         public string Train(string input)
@@ -101,5 +113,31 @@ namespace NumberRecognizer
         }
         private float GetSigmoid(float input) => (float)(1 / (1 + Math.Pow(Math.E, -input)));
         private char GetImageNumber(string image) => image[image.Length - 5];
+
+        private void SaveCondition()
+        {
+            string json = JsonConvert.SerializeObject(new
+            {
+                neuronHiddenColumn1Weights,
+                neuronHiddenColumn2Weights,
+                neuronOutputWeights
+            });
+            File.WriteAllText(filePath, json);
+        }
+        private void LoadCondition()
+        {
+            string json = File.ReadAllText(filePath);
+
+            var arrays = JsonConvert.DeserializeAnonymousType(json, new
+            {
+                w1 = new float[16][],
+                w2 = new float[16][],
+                w3 = new float[10][]
+            })!;
+
+            neuronHiddenColumn1Weights = arrays.w1;
+            neuronHiddenColumn2Weights = arrays.w2;
+            neuronOutputWeights = arrays.w3;
+        }
     }
 }
