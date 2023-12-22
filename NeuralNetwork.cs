@@ -7,6 +7,7 @@ namespace NumberRecognizer
     public class NeuralNetwork
     {
         private readonly string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "arrays.json");
+        private readonly Random random = new Random();
 
         private float[] neuronInput = new float[28 * 28];
         private float[] neuronHiddenColumn1 = new float[16];
@@ -33,17 +34,9 @@ namespace NumberRecognizer
         {
             LearningSpeed = 0.10f;
 
-            for (int i = 0; i < neuronHiddenColumn1Weights.Length; i++)
-                neuronHiddenColumn1Weights[i] = new float[16];
-
-            for (int i = 0; i < neuronHiddenColumn2Weights.Length; i++)
-                neuronHiddenColumn2Weights[i] = new float[16];
-
-            for (int i = 0; i < neuronOutputWeights.Length; i++)
-                neuronOutputWeights[i] = new float[10];
-
             if (!File.Exists(filePath))
             {
+                GenerateCondition();
                 SaveCondition();
             }
             else
@@ -52,11 +45,11 @@ namespace NumberRecognizer
             }
         }
 
-        public string Train(string input)
+        public string Train(string pathToImage)
         {
-            FillNeuronInput(input);
+            FillNeuronInput(pathToImage);
 
-            var expected = GetImageNumber(input);
+            var expected = GetImageNumber(pathToImage);
             var answer = Array.IndexOf(neuronOutput, neuronOutput.Max());
 
             total++;
@@ -71,11 +64,11 @@ namespace NumberRecognizer
                     $"Answer: {answer} | Expected: {expected}";
         }
 
-        public string Test(string input)
+        public string Test(string pathToImage)
         {
-            FillNeuronInput(input);
+            FillNeuronInput(pathToImage);
 
-            var expected = GetImageNumber(input);
+            var expected = GetImageNumber(pathToImage);
             var answer = Array.IndexOf(neuronOutput, neuronOutput.Max());
 
             total++;
@@ -114,7 +107,36 @@ namespace NumberRecognizer
         private float GetSigmoid(float input) => (float)(1 / (1 + Math.Pow(Math.E, -input)));
         private char GetImageNumber(string image) => image[image.Length - 5];
 
-        private void SaveCondition()
+        private void GenerateCondition()
+        {
+            for (int i = 0; i < neuronHiddenColumn1Weights.Length; i++)
+            {
+                neuronHiddenColumn1Weights[i] = new float[16];
+                for (int j = 0; j < neuronHiddenColumn1Weights[i].Length; j++)
+                {
+                    neuronHiddenColumn1Weights[i][j] = (random.NextSingle() - 0.5f) * 2.0f;
+                }
+            }
+
+            for (int i = 0; i < neuronHiddenColumn2Weights.Length; i++)
+            {
+                neuronHiddenColumn2Weights[i] = new float[16];
+                for (int j = 0; j < neuronHiddenColumn2Weights[i].Length; j++)
+                {
+                    neuronHiddenColumn2Weights[i][j] = (random.NextSingle() - 0.5f) * 2.0f;
+                }
+            }
+
+            for (int i = 0; i < neuronOutputWeights.Length; i++)
+            {
+                neuronOutputWeights[i] = new float[10];
+                for (int j = 0; j < neuronOutputWeights[i].Length; j++)
+                {
+                    neuronOutputWeights[i][j] = (random.NextSingle() - 0.5f) * 2.0f;
+                }
+            }
+        }
+        public void SaveCondition()
         {
             string json = JsonConvert.SerializeObject(new
             {
@@ -124,7 +146,7 @@ namespace NumberRecognizer
             });
             File.WriteAllText(filePath, json);
         }
-        private void LoadCondition()
+        public void LoadCondition()
         {
             string json = File.ReadAllText(filePath);
 
