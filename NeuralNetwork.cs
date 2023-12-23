@@ -31,7 +31,7 @@ namespace NumberRecognizer
         }
 
         public NeuralNetwork()
-        {
+        {   
             LearningSpeed = 0.10f;
 
             if (!File.Exists(filePath))
@@ -49,6 +49,8 @@ namespace NumberRecognizer
         {
             FillNeuronInput(pathToImage);
 
+            Run();
+
             var expected = GetImageNumber(pathToImage);
             var answer = Array.IndexOf(neuronOutput, neuronOutput.Max());
 
@@ -56,11 +58,11 @@ namespace NumberRecognizer
             if (expected == answer)
             {
                 accepted++;
-                return $"OK!!! Acceptance rate: {Math.Round(AcceptanceRateProcentes, 2)}% | " +
+                return pathToImage + $" | OK!!! Acceptance rate: {Math.Round(AcceptanceRateProcentes, 2)}% | " +
                     $"Answer: {answer} | Expected: {expected}";
             }
 
-            return $"FAIL!!! Acceptance rate: {Math.Round(AcceptanceRateProcentes, 2)}% | " +
+            return pathToImage + $" | FAIL!!! Acceptance rate: {Math.Round(AcceptanceRateProcentes, 2)}% | " +
                     $"Answer: {answer} | Expected: {expected}";
         }
 
@@ -68,6 +70,8 @@ namespace NumberRecognizer
         {
             FillNeuronInput(pathToImage);
 
+            Run();
+
             var expected = GetImageNumber(pathToImage);
             var answer = Array.IndexOf(neuronOutput, neuronOutput.Max());
 
@@ -75,17 +79,54 @@ namespace NumberRecognizer
             if (expected == answer)
             {
                 accepted++;
-                return $"OK!!! Acceptance rate: {Math.Round(AcceptanceRateProcentes, 2)}% | " +
+                return pathToImage + $" | OK!!! Acceptance rate: {Math.Round(AcceptanceRateProcentes, 2)}% | " +
                     $"Answer: {answer} | Expected: {expected}";
             }
 
-            return $"FAIL!!! Acceptance rate: {Math.Round(AcceptanceRateProcentes, 2)}% | " +
+            return pathToImage + $" | FAIL!!! Acceptance rate: {Math.Round(AcceptanceRateProcentes, 2)}% | " +
                     $"Answer: {answer} | Expected: {expected}";
         }
 
         private void Run()
         {
+            for (int a1 = 0; a1 < neuronHiddenColumn1.Length; a1++)
+            {
+                float bias = 0;
+                float sum = 0 + bias;
+                
+                for (int w0a0 = 0; w0a0 < neuronHiddenColumn1Weights[0].Length; w0a0++)
+                {
+                    sum += neuronInput[w0a0] * neuronHiddenColumn1Weights[a1][w0a0];
+                }
 
+                neuronHiddenColumn1[a1] = GetSigmoid(sum);
+            }
+
+            for (int a2 = 0; a2 < neuronHiddenColumn2.Length; a2++)
+            {
+                float bias = 0;
+                float sum = 0 + bias;
+
+                for (int w1a1 = 0; w1a1 < neuronHiddenColumn2Weights[0].Length; w1a1++)
+                {
+                    sum += neuronHiddenColumn1[w1a1] * neuronHiddenColumn1Weights[a2][w1a1];
+                }
+
+                neuronHiddenColumn2[a2] = GetSigmoid(sum);
+            }
+
+            for (int a3 = 0; a3 < neuronOutput.Length; a3++)
+            {
+                float bias = 0;
+                float sum = 0 + bias;
+
+                for (int w2a2 = 0; w2a2 < neuronOutputWeights[0].Length; w2a2++)
+                {
+                    sum += neuronHiddenColumn2[w2a2] * neuronHiddenColumn2Weights[a3][w2a2];
+                }
+
+                neuronOutput[a3] = GetSigmoid(sum);
+            }
         }
 
         private void FillNeuronInput(string pathToImage)
@@ -105,13 +146,13 @@ namespace NumberRecognizer
         }
 
         private float GetSigmoid(float input) => (float)(1 / (1 + Math.Pow(Math.E, -input)));
-        private char GetImageNumber(string image) => image[image.Length - 5];
+        private int GetImageNumber(string image) => image[image.Length - 5] - '0';
 
         private void GenerateCondition()
         {
             for (int i = 0; i < neuronHiddenColumn1Weights.Length; i++)
             {
-                neuronHiddenColumn1Weights[i] = new float[16];
+                neuronHiddenColumn1Weights[i] = new float[28 * 28];
                 for (int j = 0; j < neuronHiddenColumn1Weights[i].Length; j++)
                 {
                     neuronHiddenColumn1Weights[i][j] = (random.NextSingle() - 0.5f) * 2.0f;

@@ -40,6 +40,7 @@ namespace NumberRecognizer
                     var randomImage = directory[randomNum];
 
                     UpdateLog(randomImage);
+                    ClearLog();
 
                     if (isTraining)
                         listBox1.Items.Add(neuralNetwork.Train(randomImage));
@@ -54,6 +55,7 @@ namespace NumberRecognizer
                 foreach (string png in directory)
                 {
                     UpdateLog(png);
+                    ClearLog();
 
                     if (isTraining)
                         listBox1.Items.Add(neuralNetwork.Train(png));
@@ -66,6 +68,8 @@ namespace NumberRecognizer
                     }
                 }
             }
+
+            GC.Collect();
         }
         private void UpdateLog(string image)
         {
@@ -75,13 +79,21 @@ namespace NumberRecognizer
             listBox1.TopIndex = Math.Max(listBox1.Items.Count - visibleItems + 1, 0);
         }
 
+        private void ClearLog(bool isCheckingCount = true)
+        {
+            if (!isCheckingCount || listBox1.Items.Count > 1000)
+            {
+                listBox1.Items.Clear();
+            }
+        }
+
         private void buttonNextTrain_Click(object sender, EventArgs e)
         {
             Run(1, true);
         }
         private void buttonAllTrain_Click(object sender, EventArgs e)
         {
-            Run(1000, false);
+            Run(trainImages.Length, false);
         }
         private void buttonNextTest_Click(object sender, EventArgs e)
         {
@@ -89,15 +101,17 @@ namespace NumberRecognizer
         }
         private void buttonAllTest_Click(object sender, EventArgs e)
         {
-            Run(1000, false, false);
+            Run(testImages.Length, false, false);
         }
         private void buttonTrainCount_Click(object sender, EventArgs e)
         {
-            Run(Convert.ToInt32(textBox1.Text), true);
+            if (!String.IsNullOrEmpty(textBox1.Text))
+                Run(Convert.ToInt32(textBox1.Text), true);
         }
         private void buttonTestCount_Click(object sender, EventArgs e)
         {
-            Run(Convert.ToInt32(textBox2.Text), true, false);
+            if (!String.IsNullOrEmpty(textBox2.Text))
+                Run(Convert.ToInt32(textBox2.Text), true, false);
         }
 
         private void keyPressEvent(object sender, KeyPressEventArgs e)

@@ -43,15 +43,23 @@
             textBox1 = new TextBox();
             textBox2 = new TextBox();
             label3 = new Label();
+            menuStrip1 = new MenuStrip();
+            programToolStripMenuItem = new ToolStripMenuItem();
+            clearLogsToolStripMenuItem = new ToolStripMenuItem();
+            neuralNetworkToolStripMenuItem = new ToolStripMenuItem();
+            deleteSavedWeightsToolStripMenuItem = new ToolStripMenuItem();
+            newWeightsToolStripMenuItem = new ToolStripMenuItem();
+            saveWeightsToolStripMenuItem = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)trackBar1).BeginInit();
+            menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // pictureBox1
             // 
             pictureBox1.BackColor = Color.Transparent;
             pictureBox1.BorderStyle = BorderStyle.FixedSingle;
-            pictureBox1.Location = new Point(12, 50);
+            pictureBox1.Location = new Point(12, 74);
             pictureBox1.Name = "pictureBox1";
             pictureBox1.Size = new Size(140, 140);
             pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
@@ -64,7 +72,7 @@
             buttonTrainCount.BackColor = SystemColors.ControlDarkDark;
             buttonTrainCount.FlatStyle = FlatStyle.Flat;
             buttonTrainCount.ForeColor = SystemColors.ControlLight;
-            buttonTrainCount.Location = new Point(378, 50);
+            buttonTrainCount.Location = new Point(378, 74);
             buttonTrainCount.Name = "buttonTrainCount";
             buttonTrainCount.Size = new Size(194, 23);
             buttonTrainCount.TabIndex = 1;
@@ -77,7 +85,7 @@
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 16F);
             label1.ForeColor = Color.WhiteSmoke;
-            label1.Location = new Point(12, 9);
+            label1.Location = new Point(12, 33);
             label1.Name = "label1";
             label1.Size = new Size(93, 30);
             label1.TabIndex = 2;
@@ -90,9 +98,9 @@
             listBox1.ForeColor = SystemColors.ControlLight;
             listBox1.FormattingEnabled = true;
             listBox1.ItemHeight = 15;
-            listBox1.Location = new Point(12, 226);
+            listBox1.Location = new Point(12, 256);
             listBox1.Name = "listBox1";
-            listBox1.Size = new Size(560, 124);
+            listBox1.Size = new Size(560, 319);
             listBox1.TabIndex = 3;
             // 
             // label2
@@ -100,7 +108,7 @@
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI", 16F);
             label2.ForeColor = Color.WhiteSmoke;
-            label2.Location = new Point(12, 193);
+            label2.Location = new Point(12, 217);
             label2.Name = "label2";
             label2.Size = new Size(58, 30);
             label2.TabIndex = 4;
@@ -112,7 +120,7 @@
             buttonTestCount.BackColor = SystemColors.ControlDarkDark;
             buttonTestCount.FlatStyle = FlatStyle.Flat;
             buttonTestCount.ForeColor = SystemColors.ControlLight;
-            buttonTestCount.Location = new Point(378, 108);
+            buttonTestCount.Location = new Point(378, 132);
             buttonTestCount.Name = "buttonTestCount";
             buttonTestCount.Size = new Size(194, 23);
             buttonTestCount.TabIndex = 6;
@@ -126,7 +134,7 @@
             buttonAllTest.BackColor = SystemColors.ControlDarkDark;
             buttonAllTest.FlatStyle = FlatStyle.Flat;
             buttonAllTest.ForeColor = SystemColors.ControlLight;
-            buttonAllTest.Location = new Point(178, 137);
+            buttonAllTest.Location = new Point(178, 161);
             buttonAllTest.Name = "buttonAllTest";
             buttonAllTest.Size = new Size(194, 23);
             buttonAllTest.TabIndex = 11;
@@ -140,7 +148,7 @@
             buttonNextTest.BackColor = SystemColors.ControlDarkDark;
             buttonNextTest.FlatStyle = FlatStyle.Flat;
             buttonNextTest.ForeColor = SystemColors.ControlLight;
-            buttonNextTest.Location = new Point(178, 108);
+            buttonNextTest.Location = new Point(178, 132);
             buttonNextTest.Name = "buttonNextTest";
             buttonNextTest.Size = new Size(194, 23);
             buttonNextTest.TabIndex = 10;
@@ -154,7 +162,7 @@
             buttonAllTrain.BackColor = SystemColors.ControlDarkDark;
             buttonAllTrain.FlatStyle = FlatStyle.Flat;
             buttonAllTrain.ForeColor = SystemColors.ControlLight;
-            buttonAllTrain.Location = new Point(178, 79);
+            buttonAllTrain.Location = new Point(178, 103);
             buttonAllTrain.Name = "buttonAllTrain";
             buttonAllTrain.Size = new Size(194, 23);
             buttonAllTrain.TabIndex = 9;
@@ -168,7 +176,7 @@
             buttonNextTrain.BackColor = SystemColors.ControlDarkDark;
             buttonNextTrain.FlatStyle = FlatStyle.Flat;
             buttonNextTrain.ForeColor = SystemColors.ControlLight;
-            buttonNextTrain.Location = new Point(178, 50);
+            buttonNextTrain.Location = new Point(178, 74);
             buttonNextTrain.Name = "buttonNextTrain";
             buttonNextTrain.Size = new Size(194, 23);
             buttonNextTrain.TabIndex = 8;
@@ -183,7 +191,7 @@
             button9.Enabled = false;
             button9.FlatStyle = FlatStyle.Flat;
             button9.ForeColor = SystemColors.ControlLight;
-            button9.Location = new Point(178, 167);
+            button9.Location = new Point(178, 191);
             button9.Name = "button9";
             button9.Size = new Size(194, 23);
             button9.TabIndex = 12;
@@ -193,7 +201,7 @@
             // trackBar1
             // 
             trackBar1.Enabled = false;
-            trackBar1.Location = new Point(378, 166);
+            trackBar1.Location = new Point(378, 190);
             trackBar1.Maximum = 100;
             trackBar1.Minimum = 1;
             trackBar1.Name = "trackBar1";
@@ -207,7 +215,7 @@
             textBox1.BackColor = SystemColors.ControlDarkDark;
             textBox1.BorderStyle = BorderStyle.FixedSingle;
             textBox1.ForeColor = SystemColors.ControlLight;
-            textBox1.Location = new Point(378, 79);
+            textBox1.Location = new Point(378, 103);
             textBox1.MaxLength = 5;
             textBox1.Name = "textBox1";
             textBox1.Size = new Size(194, 23);
@@ -219,7 +227,7 @@
             textBox2.BackColor = SystemColors.ControlDarkDark;
             textBox2.BorderStyle = BorderStyle.FixedSingle;
             textBox2.ForeColor = SystemColors.ControlLight;
-            textBox2.Location = new Point(378, 138);
+            textBox2.Location = new Point(378, 162);
             textBox2.MaxLength = 5;
             textBox2.Name = "textBox2";
             textBox2.Size = new Size(194, 23);
@@ -232,18 +240,65 @@
             label3.BackColor = Color.Transparent;
             label3.Font = new Font("Segoe UI", 16F);
             label3.ForeColor = Color.WhiteSmoke;
-            label3.Location = new Point(178, 9);
+            label3.Location = new Point(178, 33);
             label3.Name = "label3";
             label3.Size = new Size(89, 30);
             label3.TabIndex = 16;
             label3.Text = "Options";
+            // 
+            // menuStrip1
+            // 
+            menuStrip1.Items.AddRange(new ToolStripItem[] { programToolStripMenuItem, neuralNetworkToolStripMenuItem });
+            menuStrip1.Location = new Point(0, 0);
+            menuStrip1.Name = "menuStrip1";
+            menuStrip1.Size = new Size(584, 24);
+            menuStrip1.TabIndex = 17;
+            menuStrip1.Text = "menuStrip1";
+            // 
+            // programToolStripMenuItem
+            // 
+            programToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { clearLogsToolStripMenuItem });
+            programToolStripMenuItem.Name = "programToolStripMenuItem";
+            programToolStripMenuItem.Size = new Size(65, 20);
+            programToolStripMenuItem.Text = "Program";
+            // 
+            // clearLogsToolStripMenuItem
+            // 
+            clearLogsToolStripMenuItem.Name = "clearLogsToolStripMenuItem";
+            clearLogsToolStripMenuItem.Size = new Size(126, 22);
+            clearLogsToolStripMenuItem.Text = "Clear logs";
+            // 
+            // neuralNetworkToolStripMenuItem
+            // 
+            neuralNetworkToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { deleteSavedWeightsToolStripMenuItem, newWeightsToolStripMenuItem, saveWeightsToolStripMenuItem });
+            neuralNetworkToolStripMenuItem.Name = "neuralNetworkToolStripMenuItem";
+            neuralNetworkToolStripMenuItem.Size = new Size(102, 20);
+            neuralNetworkToolStripMenuItem.Text = "Neural Network";
+            // 
+            // deleteSavedWeightsToolStripMenuItem
+            // 
+            deleteSavedWeightsToolStripMenuItem.Name = "deleteSavedWeightsToolStripMenuItem";
+            deleteSavedWeightsToolStripMenuItem.Size = new Size(152, 22);
+            deleteSavedWeightsToolStripMenuItem.Text = "Delete save file";
+            // 
+            // newWeightsToolStripMenuItem
+            // 
+            newWeightsToolStripMenuItem.Name = "newWeightsToolStripMenuItem";
+            newWeightsToolStripMenuItem.Size = new Size(152, 22);
+            newWeightsToolStripMenuItem.Text = "New weights";
+            // 
+            // saveWeightsToolStripMenuItem
+            // 
+            saveWeightsToolStripMenuItem.Name = "saveWeightsToolStripMenuItem";
+            saveWeightsToolStripMenuItem.Size = new Size(152, 22);
+            saveWeightsToolStripMenuItem.Text = "Save weights";
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(72, 72, 72);
-            ClientSize = new Size(584, 361);
+            ClientSize = new Size(584, 598);
             Controls.Add(label3);
             Controls.Add(textBox2);
             Controls.Add(textBox1);
@@ -259,6 +314,8 @@
             Controls.Add(label1);
             Controls.Add(buttonTrainCount);
             Controls.Add(pictureBox1);
+            Controls.Add(menuStrip1);
+            MainMenuStrip = menuStrip1;
             MaximumSize = new Size(600, 1000);
             MinimumSize = new Size(600, 400);
             Name = "Form1";
@@ -266,6 +323,8 @@
             Load += Form1_Load;
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ((System.ComponentModel.ISupportInitialize)trackBar1).EndInit();
+            menuStrip1.ResumeLayout(false);
+            menuStrip1.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -287,5 +346,12 @@
         private TextBox textBox1;
         private TextBox textBox2;
         private Label label3;
+        private MenuStrip menuStrip1;
+        private ToolStripMenuItem neuralNetworkToolStripMenuItem;
+        private ToolStripMenuItem deleteSavedWeightsToolStripMenuItem;
+        private ToolStripMenuItem newWeightsToolStripMenuItem;
+        private ToolStripMenuItem saveWeightsToolStripMenuItem;
+        private ToolStripMenuItem programToolStripMenuItem;
+        private ToolStripMenuItem clearLogsToolStripMenuItem;
     }
 }
