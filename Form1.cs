@@ -25,10 +25,10 @@ namespace NumberRecognizer
         }
         private void Form1_Load(object sender, EventArgs e)
         {
-            Run(1, true);
+            Run();
         }
 
-        private void Run(int count = 1, bool isRandomized = true, bool isTraining = true)
+        private void Run(int count = 1, bool isRandomized = true, bool isTraining = false)
         {
             var directory = isTraining ? trainImages : testImages;
 
@@ -42,10 +42,7 @@ namespace NumberRecognizer
                     UpdateLog(randomImage);
                     ClearLog();
 
-                    if (isTraining)
-                        listBox1.Items.Add(neuralNetwork.Train(randomImage));
-                    else
-                        listBox1.Items.Add(neuralNetwork.Test(randomImage));
+                    listBox1.Items.Add(neuralNetwork.Start(randomImage, isTraining));
                 }
             }
             else
@@ -57,10 +54,7 @@ namespace NumberRecognizer
                     UpdateLog(png);
                     ClearLog();
 
-                    if (isTraining)
-                        listBox1.Items.Add(neuralNetwork.Train(png));
-                    else
-                        listBox1.Items.Add(neuralNetwork.Test(png));
+                    listBox1.Items.Add(neuralNetwork.Start(png, isTraining));
 
                     if (i++ >= count)
                     {
@@ -83,35 +77,36 @@ namespace NumberRecognizer
         {
             if (!isCheckingCount || listBox1.Items.Count > 1000)
             {
+                neuralNetwork.SaveCondition(); //TODO
                 listBox1.Items.Clear();
             }
         }
 
         private void buttonNextTrain_Click(object sender, EventArgs e)
         {
-            Run(1, true);
+            Run(1, true, true);
         }
         private void buttonAllTrain_Click(object sender, EventArgs e)
         {
-            Run(trainImages.Length, false);
+            Run(trainImages.Length, false, true);
         }
         private void buttonNextTest_Click(object sender, EventArgs e)
         {
-            Run(1, true, false);
+            Run(1, true);
         }
         private void buttonAllTest_Click(object sender, EventArgs e)
         {
-            Run(testImages.Length, false, false);
+            Run(testImages.Length, false);
         }
         private void buttonTrainCount_Click(object sender, EventArgs e)
         {
             if (!String.IsNullOrEmpty(textBox1.Text))
-                Run(Convert.ToInt32(textBox1.Text), true);
+                Run(Convert.ToInt32(textBox1.Text), true, true);
         }
         private void buttonTestCount_Click(object sender, EventArgs e)
         {
             if (!String.IsNullOrEmpty(textBox2.Text))
-                Run(Convert.ToInt32(textBox2.Text), true, false);
+                Run(Convert.ToInt32(textBox2.Text), true);
         }
 
         private void keyPressEvent(object sender, KeyPressEventArgs e)
