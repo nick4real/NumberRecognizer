@@ -11,21 +11,34 @@ namespace NumberRecognizer
         private const int nhc1Size = 16;
         private const int nhc2Size = 16;
         private const int outputSize = 10;
+
         // neuronHiddenColumn - nhc
-        private float[] neuronInput = new float[28 * 28];
-        private float[] nhc1 = new float[16];
-        private float[] nhc2 = new float[16];
-        private float[] neuronOutput = new float[10];
+        private float[] neuronInput = new float[inputSize];
+        private float[] nhc1 = new float[nhc1Size];
+        private float[] nhc2 = new float[nhc2Size];
+        private float[] neuronOutput = new float[outputSize];
 
-        private float[,] nhc1Weights = new float[16, 28 * 28];
-        private float[,] nhc2Weights = new float[16, 16];
-        private float[,] neuronOutputWeights = new float[10, 16];
+        private float[,] nhc1Weights = new float[nhc1Size, inputSize];
+        private float[,] nhc2Weights = new float[nhc2Size, nhc1Size];
+        private float[,] neuronOutputWeights = new float[outputSize, nhc2Size];
 
-        private float[] nhc1Biases = new float[16];
-        private float[] nhc2Biases = new float[16];
-        private float[] neuronOutputBiases = new float[10];
+        private float[] nhc1Biases = new float[nhc1Size];
+        private float[] nhc2Biases = new float[nhc2Size];
+        private float[] neuronOutputBiases = new float[outputSize];
 
-        public float LearningSpeed { get; set; }
+        private float learningRate;
+        public float LearningRate
+        {
+            get
+            {
+                return learningRate;
+            }
+            set
+            {
+                // 0.1 <= value <= 0.001
+                learningRate = Math.Min(0.1f, Math.Max(value, 0.001f));
+            }
+        }
 
         private int accepted;
         private int total;
@@ -39,7 +52,7 @@ namespace NumberRecognizer
 
         public NeuralNetwork()
         {
-            LearningSpeed = 0.001f;
+            LearningRate = 0.05f;
 
             if (!File.Exists(filePath))
             {
@@ -51,7 +64,6 @@ namespace NumberRecognizer
                 LoadCondition();
             }
         }
-
         public string Start(string pathToImage, bool isTraining = false)
         {
             FillNeuronInput(pathToImage);
@@ -61,118 +73,12 @@ namespace NumberRecognizer
             var expected = GetSourceImageNumber(pathToImage);
             var answer = Array.IndexOf(neuronOutput, neuronOutput.Max());
 
-            var vectorError = GetVectorError(expected);
-            var error = vectorError.Sum();
+            var error = GetCrossEntropy(expected);
 
-            if (isTraining) CalibrateWeights(expected);
+            if (answer == expected && isTraining) CalibrateWeights(expected);
 
             return GetNetworkResult(answer, expected, error);
         }
-
-        private float[] GetVectorError(int expected)
-        {
-            float[] vectorError = new float[neuronOutput.Length];
-            for (int i = 0; i < vectorError.Length; i++)
-            {
-                float answer = i == expected ? 1 : 0;
-                vectorError[i] = (float)Math.Pow(neuronOutput[i] - answer, 2);
-            }
-            return vectorError;
-        }
-        private string GetNetworkResult(int answer, int expected, float error)
-        {
-            total++;
-            if (expected == answer)
-            {
-                accepted++;
-                return $" | OK!!! Acceptance rate: {Math.Round(AcceptanceRateProcentes, 2)}% | " +
-                    $"Answer: {answer} | Expected: {expected} | Error: {Math.Round(error, 2)}";
-            }
-
-            return $" | FAIL!!! Acceptance rate: {Math.Round(AcceptanceRateProcentes, 2)}% | " +
-                    $"Answer: {answer} | Expected: {expected} | Error: {Math.Round(error, 2)}";
-        }
-        private void CalculateNeurons()
-        {
-            for (int a1 = 0; a1 < nhc1Size; a1++)
-            {
-                float sum = 0 + nhc1Biases[a1];
-
-                for (int w0a0 = 0; w0a0 < inputSize; w0a0++)
-                {
-                    sum += neuronInput[w0a0] * nhc1Weights[a1,w0a0];
-                }
-
-                nhc1[a1] = GetSigmoid(sum);
-            }
-
-            for (int a2 = 0; a2 < nhc2Size; a2++)
-            {
-                float sum = 0 + nhc2Biases[a2];
-
-                for (int w1a1 = 0; w1a1 < nhc1Size; w1a1++)
-                {
-                    sum += nhc1[w1a1] * nhc1Weights[a2,w1a1];
-                }
-
-                nhc2[a2] = GetSigmoid(sum);
-            }
-
-            for (int a3 = 0; a3 < outputSize; a3++)
-            {
-                float sum = 0 + neuronOutputBiases[a3];
-
-                for (int w2a2 = 0; w2a2 < nhc2Size; w2a2++)
-                {
-                    sum += nhc2[w2a2] * nhc2Weights[a3,w2a2];
-                }
-
-                neuronOutput[a3] = GetSigmoid(sum);
-            }
-        }
-        //TODO: 
-        private void CalibrateWeights(int trueAnswer)
-        {
-            // backprop
-            float[] dE_dA3 = GetVectorError(trueAnswer);
-            float[,] dE_dW3 = new float[outputSize, nhc2Size];
-
-            //gradient[column] also equals gradient[column]Biases
-            float[] gradientOutput = new float[outputSize];
-            float[] gradientNhc2 = new float[nhc2Size];
-            float[] gradientNhc1 = new float[nhc1Size];
-
-            float[,] gradientOutputW = new float[outputSize,nhc2Size];
-            float[,] gradientNhc2W = new float[nhc2Size, nhc1Size];
-            float[,] gradientNhc1W = new float[nhc1Size, inputSize];
-
-
-
-
-            // update
-            for (int i = 0; i < inputSize; i++)
-            {
-                for (int j = 0; j < nhc1Size; j++)
-                {
-                    nhc1Weights[j, i] = nhc1Weights[j, i] - LearningSpeed * gradientNhc1W[j,i];
-                }
-            }
-            for (int i = 0; i < nhc1Size; i++)
-            {
-                for (int j = 0; j < nhc2Size; j++)
-                {
-                    nhc2Weights[j, i] = nhc2Weights[j, i] - LearningSpeed * gradientNhc2W[j,i];
-                }
-            }
-            for (int i = 0; i < nhc2Size; i++)
-            {
-                for (int j = 0; j < outputSize; j++)
-                {
-                    neuronOutputWeights[j, i] = neuronOutputWeights[j, i] - LearningSpeed * gradientOutputW[j,i];
-                }
-            }
-        }
-
         private void FillNeuronInput(string pathToImage)
         {
             var image = new Bitmap(pathToImage);
@@ -188,15 +94,171 @@ namespace NumberRecognizer
                 }
             }
         }
+        private void CalculateNeurons()
+        {
+            for (int a1 = 0; a1 < nhc1Size; a1++)
+            {
+                float sum = 0 + nhc1Biases[a1];
+
+                for (int w0a0 = 0; w0a0 < inputSize; w0a0++)
+                {
+                    sum += neuronInput[w0a0] * nhc1Weights[a1, w0a0];
+                }
+
+                nhc1[a1] = GetSigmoid(sum);
+            }
+
+            for (int a2 = 0; a2 < nhc2Size; a2++)
+            {
+                float sum = 0 + nhc2Biases[a2];
+
+                for (int w1a1 = 0; w1a1 < nhc1Size; w1a1++)
+                {
+                    sum += nhc1[w1a1] * nhc1Weights[a2, w1a1];
+                }
+
+                nhc2[a2] = GetSigmoid(sum);
+            }
+
+            for (int a3 = 0; a3 < outputSize; a3++)
+            {
+                float sum = 0 + neuronOutputBiases[a3];
+
+                for (int w2a2 = 0; w2a2 < nhc2Size; w2a2++)
+                {
+                    sum += nhc2[w2a2] * nhc2Weights[a3, w2a2];
+                }
+
+                neuronOutput[a3] = GetSigmoid(sum);
+            }
+
+            neuronOutput = GetSoftmax(neuronOutput);
+        }
+        private void CalibrateWeights(int trueAnswer)
+        {
+            // backprop
+
+            //gradient[column] also equals gradient[column]Biases
+            float[] gradientOutput = GetVectorError(trueAnswer);
+            float[] gradientNhc2 = new float[nhc2Size];
+            float[] gradientNhc1 = new float[nhc1Size];
+
+            float[,] gradientOutputW = new float[outputSize, nhc2Size];
+            float[,] gradientNhc2W = new float[nhc2Size, nhc1Size];
+            float[,] gradientNhc1W = new float[nhc1Size, inputSize];
+
+            for (int i = 0; i < nhc2Size; i++)
+            {
+                for (int j = 0; j < outputSize; j++)
+                {
+                    gradientOutputW[j, i] = nhc2[i] * gradientOutput[j];
+
+                    gradientNhc2[i] += gradientOutput[j] * neuronOutputWeights[j, i];
+                }
+                gradientNhc2[i] *= nhc2[i] * (1 - nhc2[i]);
+            }
+            for (int i = 0; i < nhc1Size; i++)
+            {
+                for (int j = 0; j < nhc2Size; j++)
+                {
+                    gradientNhc2W[j, i] = nhc1[i] * gradientNhc2[j];
+
+                    gradientNhc1[i] += gradientNhc2[j] * nhc2Weights[j, i];
+                }
+                gradientNhc1[i] *= nhc1[i] * (1 - nhc1[i]);
+            }
+            for (int i = 0; i < inputSize; i++)
+            {
+                for (int j = 0; j < nhc1Size; j++)
+                {
+                    gradientNhc1W[j, i] = neuronInput[i] * gradientNhc1[j];
+                }
+            }
+
+            // update
+            for (int i = 0; i < inputSize; i++)
+            {
+                for (int j = 0; j < nhc1Size; j++)
+                {
+                    nhc1Weights[j, i] = nhc1Weights[j, i] - LearningRate * gradientNhc1W[j, i];
+                }
+            }
+            for (int i = 0; i < nhc1Size; i++)
+            {
+                nhc1Biases[i] = nhc1Biases[i] - LearningRate * gradientNhc1[i];
+                for (int j = 0; j < nhc2Size; j++)
+                {
+                    nhc2Weights[j, i] = nhc2Weights[j, i] - LearningRate * gradientNhc2W[j, i];
+                }
+            }
+            for (int i = 0; i < nhc2Size; i++)
+            {
+                nhc2Biases[i] = nhc2Biases[i] - LearningRate * gradientNhc2[i];
+                for (int j = 0; j < outputSize; j++)
+                {
+                    neuronOutputWeights[j, i] = neuronOutputWeights[j, i] - LearningRate * gradientOutputW[j, i];
+                }
+            }
+            for (int i = 0; i < outputSize; i++)
+            {
+                neuronOutputBiases[i] = neuronOutputBiases[i] - LearningRate * gradientOutput[i];
+            }
+        }
+
+
+
+        private float[] GetVectorError(int expected)
+        {
+            float[] vectorError = new float[outputSize];
+            float[] answers = new float[outputSize];
+            answers[expected] = 1;
+            for (int i = 0; i < vectorError.Length; i++)
+            {
+                vectorError[i] = neuronOutput[i] - answers[i];
+            }
+            return vectorError;
+        }
+        private float[] GetSoftmax(float[] input) 
+        {
+            float sum = input.Sum();
+            for (int i = 0; i < input.Length; i++)
+            {
+                input[i] = input[i] / sum;
+            }
+            return input;
+        }
+        private float GetCrossEntropy(int expected)
+        {
+            float crossEntropy = 0;
+            for (int i = 0; i < outputSize; i++)
+            {
+                float answer = i == expected ? 1 : 0;
+                crossEntropy += answer * (float)Math.Log(neuronOutput[i]);
+            }
+            return -crossEntropy;
+        }
         private float GetSigmoid(float input) => (float)(1 / (1 + Math.Pow(Math.E, -input)));
         private float GetSigmoidDerivative(float input)
         {
             float siqmoid = GetSigmoid(input);
             return siqmoid * (1 - siqmoid);
         }
-        private int GetSourceImageNumber(string image) => image[image.Length - 5] - '0';
 
-        private void GenerateCondition()
+        private string GetNetworkResult(int answer, int expected, float error)
+        {
+            total++;
+            if (expected == answer)
+            {
+                accepted++;
+                return $" | OK!!! Acceptance rate: {Math.Round(AcceptanceRateProcentes, 2)}% | " +
+                    $"Answer: {answer} | Expected: {expected} | Error: {Math.Round(error, 2)}";
+            }
+
+            return $" | FAIL!!! Acceptance rate: {Math.Round(AcceptanceRateProcentes, 2)}% | " +
+                    $"Answer: {answer} | Expected: {expected} | Error: {Math.Round(error, 2)}";
+        }
+        private int GetSourceImageNumber(string image) => image[image.Length - 5] - '0';
+        public void GenerateCondition()
         {
             for (int i = 0; i < nhc1Size; i++)
             {
@@ -223,14 +285,17 @@ namespace NumberRecognizer
             for (int i = 0; i < nhc1Biases.Length; i++)
             {
                 nhc1Biases[i] = (random.NextSingle() - 0.5f) * 2.0f;
+                //nhc1Biases[i] = -10f;
             }
             for (int i = 0; i < nhc2Biases.Length; i++)
             {
                 nhc2Biases[i] = (random.NextSingle() - 0.5f) * 2.0f;
+                //nhc2Biases[i] = -10f;
             }
             for (int i = 0; i < neuronOutputBiases.Length; i++)
             {
                 neuronOutputBiases[i] = (random.NextSingle() - 0.5f) * 2.0f;
+                //neuronOutputBiases[i] = -10f;
             }
         }
         public void SaveCondition()
@@ -266,6 +331,12 @@ namespace NumberRecognizer
             nhc1Biases = arrays.b1;
             nhc2Biases = arrays.b2;
             neuronOutputBiases = arrays.b3;
+        }
+
+        public void ResetAC()
+        {
+            accepted = 0;
+            total = 0;
         }
     }
 }

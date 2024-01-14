@@ -38,8 +38,8 @@
             buttonNextTest = new Button();
             buttonAllTrain = new Button();
             buttonNextTrain = new Button();
-            button9 = new Button();
-            trackBar1 = new TrackBar();
+            buttonChangeLR = new Button();
+            trackBarLR = new TrackBar();
             textBox1 = new TextBox();
             textBox2 = new TextBox();
             label3 = new Label();
@@ -50,8 +50,10 @@
             deleteSavedWeightsToolStripMenuItem = new ToolStripMenuItem();
             newWeightsToolStripMenuItem = new ToolStripMenuItem();
             saveWeightsToolStripMenuItem = new ToolStripMenuItem();
+            resetAcceptanceRateToolStripMenuItem = new ToolStripMenuItem();
+            label4 = new Label();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)trackBar1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)trackBarLR).BeginInit();
             menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
@@ -184,31 +186,31 @@
             buttonNextTrain.UseVisualStyleBackColor = false;
             buttonNextTrain.Click += buttonNextTrain_Click;
             // 
-            // button9
+            // buttonChangeLR
             // 
-            button9.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            button9.BackColor = SystemColors.ControlDarkDark;
-            button9.Enabled = false;
-            button9.FlatStyle = FlatStyle.Flat;
-            button9.ForeColor = SystemColors.ControlLight;
-            button9.Location = new Point(178, 191);
-            button9.Name = "button9";
-            button9.Size = new Size(194, 23);
-            button9.TabIndex = 12;
-            button9.Text = "Change learning speed";
-            button9.UseVisualStyleBackColor = false;
+            buttonChangeLR.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            buttonChangeLR.BackColor = SystemColors.ControlDarkDark;
+            buttonChangeLR.FlatStyle = FlatStyle.Flat;
+            buttonChangeLR.ForeColor = SystemColors.ControlLight;
+            buttonChangeLR.Location = new Point(178, 191);
+            buttonChangeLR.Name = "buttonChangeLR";
+            buttonChangeLR.Size = new Size(194, 23);
+            buttonChangeLR.TabIndex = 12;
+            buttonChangeLR.Text = "Change learning rate";
+            buttonChangeLR.UseVisualStyleBackColor = false;
+            buttonChangeLR.Click += buttonChangeLR_Click;
             // 
-            // trackBar1
+            // trackBarLR
             // 
-            trackBar1.Enabled = false;
-            trackBar1.Location = new Point(378, 190);
-            trackBar1.Maximum = 100;
-            trackBar1.Minimum = 1;
-            trackBar1.Name = "trackBar1";
-            trackBar1.Size = new Size(194, 45);
-            trackBar1.TabIndex = 13;
-            trackBar1.TickFrequency = 10;
-            trackBar1.Value = 10;
+            trackBarLR.Location = new Point(421, 190);
+            trackBarLR.Maximum = 1000;
+            trackBarLR.Minimum = 10;
+            trackBarLR.Name = "trackBarLR";
+            trackBarLR.Size = new Size(151, 45);
+            trackBarLR.TabIndex = 100;
+            trackBarLR.TickFrequency = 100;
+            trackBarLR.Value = 20;
+            trackBarLR.ValueChanged += trackBarLR_ValueChanged;
             // 
             // textBox1
             // 
@@ -220,6 +222,7 @@
             textBox1.Name = "textBox1";
             textBox1.Size = new Size(194, 23);
             textBox1.TabIndex = 14;
+            textBox1.Text = "1000";
             textBox1.KeyPress += keyPressEvent;
             // 
             // textBox2
@@ -232,6 +235,7 @@
             textBox2.Name = "textBox2";
             textBox2.Size = new Size(194, 23);
             textBox2.TabIndex = 15;
+            textBox2.Text = "1000";
             textBox2.KeyPress += keyPressEvent;
             // 
             // label3
@@ -270,7 +274,7 @@
             // 
             // neuralNetworkToolStripMenuItem
             // 
-            neuralNetworkToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { deleteSavedWeightsToolStripMenuItem, newWeightsToolStripMenuItem, saveWeightsToolStripMenuItem });
+            neuralNetworkToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { deleteSavedWeightsToolStripMenuItem, newWeightsToolStripMenuItem, saveWeightsToolStripMenuItem, resetAcceptanceRateToolStripMenuItem });
             neuralNetworkToolStripMenuItem.Name = "neuralNetworkToolStripMenuItem";
             neuralNetworkToolStripMenuItem.Size = new Size(102, 20);
             neuralNetworkToolStripMenuItem.Text = "Neural Network";
@@ -278,20 +282,40 @@
             // deleteSavedWeightsToolStripMenuItem
             // 
             deleteSavedWeightsToolStripMenuItem.Name = "deleteSavedWeightsToolStripMenuItem";
-            deleteSavedWeightsToolStripMenuItem.Size = new Size(152, 22);
+            deleteSavedWeightsToolStripMenuItem.Size = new Size(188, 22);
             deleteSavedWeightsToolStripMenuItem.Text = "Delete save file";
             // 
             // newWeightsToolStripMenuItem
             // 
             newWeightsToolStripMenuItem.Name = "newWeightsToolStripMenuItem";
-            newWeightsToolStripMenuItem.Size = new Size(152, 22);
+            newWeightsToolStripMenuItem.Size = new Size(188, 22);
             newWeightsToolStripMenuItem.Text = "New weights";
+            newWeightsToolStripMenuItem.Click += newWeightsToolStripMenuItem_Click;
             // 
             // saveWeightsToolStripMenuItem
             // 
             saveWeightsToolStripMenuItem.Name = "saveWeightsToolStripMenuItem";
-            saveWeightsToolStripMenuItem.Size = new Size(152, 22);
+            saveWeightsToolStripMenuItem.Size = new Size(188, 22);
             saveWeightsToolStripMenuItem.Text = "Save weights";
+            // 
+            // resetAcceptanceRateToolStripMenuItem
+            // 
+            resetAcceptanceRateToolStripMenuItem.Name = "resetAcceptanceRateToolStripMenuItem";
+            resetAcceptanceRateToolStripMenuItem.Size = new Size(188, 22);
+            resetAcceptanceRateToolStripMenuItem.Text = "Reset acceptance rate";
+            resetAcceptanceRateToolStripMenuItem.Click += resetAcceptanceRateToolStripMenuItem_Click;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.BackColor = Color.Transparent;
+            label4.Font = new Font("Segoe UI", 9F);
+            label4.ForeColor = Color.WhiteSmoke;
+            label4.Location = new Point(381, 195);
+            label4.Name = "label4";
+            label4.Size = new Size(28, 15);
+            label4.TabIndex = 101;
+            label4.Text = "0,05";
             // 
             // Form1
             // 
@@ -299,11 +323,12 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(72, 72, 72);
             ClientSize = new Size(584, 598);
+            Controls.Add(label4);
             Controls.Add(label3);
             Controls.Add(textBox2);
             Controls.Add(textBox1);
-            Controls.Add(trackBar1);
-            Controls.Add(button9);
+            Controls.Add(trackBarLR);
+            Controls.Add(buttonChangeLR);
             Controls.Add(buttonAllTest);
             Controls.Add(buttonNextTest);
             Controls.Add(buttonAllTrain);
@@ -322,7 +347,7 @@
             Text = "Form1";
             Load += Form1_Load;
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
-            ((System.ComponentModel.ISupportInitialize)trackBar1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)trackBarLR).EndInit();
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             ResumeLayout(false);
@@ -341,8 +366,8 @@
         private Button buttonNextTest;
         private Button buttonAllTrain;
         private Button buttonNextTrain;
-        private Button button9;
-        private TrackBar trackBar1;
+        private Button buttonChangeLR;
+        private TrackBar trackBarLR;
         private TextBox textBox1;
         private TextBox textBox2;
         private Label label3;
@@ -353,5 +378,7 @@
         private ToolStripMenuItem saveWeightsToolStripMenuItem;
         private ToolStripMenuItem programToolStripMenuItem;
         private ToolStripMenuItem clearLogsToolStripMenuItem;
+        private ToolStripMenuItem resetAcceptanceRateToolStripMenuItem;
+        private Label label4;
     }
 }

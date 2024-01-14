@@ -72,12 +72,11 @@ namespace NumberRecognizer
             int visibleItems = listBox1.ClientSize.Height / listBox1.ItemHeight;
             listBox1.TopIndex = Math.Max(listBox1.Items.Count - visibleItems + 1, 0);
         }
-
         private void ClearLog(bool isCheckingCount = true)
         {
             if (!isCheckingCount || listBox1.Items.Count > 1000)
             {
-                neuralNetwork.SaveCondition(); //TODO
+                neuralNetwork.SaveCondition();
                 listBox1.Items.Clear();
             }
         }
@@ -108,6 +107,14 @@ namespace NumberRecognizer
             if (!String.IsNullOrEmpty(textBox2.Text))
                 Run(Convert.ToInt32(textBox2.Text), true);
         }
+        private void buttonChangeLR_Click(object sender, EventArgs e)
+        {
+            neuralNetwork.LearningRate = (float)Math.Round(1.0f / trackBarLR.Value, 4);
+        }
+        private void trackBarLR_ValueChanged(object sender, EventArgs e)
+        {
+            label4.Text = Convert.ToString(Math.Round(1.0f / trackBarLR.Value, 4));
+        }
 
         private void keyPressEvent(object sender, KeyPressEventArgs e)
         {
@@ -116,5 +123,8 @@ namespace NumberRecognizer
                 e.Handled = true;
             }
         }
+
+        private void resetAcceptanceRateToolStripMenuItem_Click(object sender, EventArgs e) => neuralNetwork.ResetAC();
+        private void newWeightsToolStripMenuItem_Click(object sender, EventArgs e) => neuralNetwork.GenerateCondition();
     }
 }
