@@ -25,7 +25,7 @@ namespace NumberRecognizer
         }
         private void Form1_Load(object sender, EventArgs e)
         {
-            Run();
+            
         }
 
         private void Run(int count = 1, bool isRandomized = true, bool isTraining = false)
